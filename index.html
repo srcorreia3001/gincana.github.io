@@ -96,12 +96,29 @@
             font-size: 26px;
             font-weight: 700;
             color: #1a252f;
-            line-height: 1.4;
+            line-height: 1.5;
             margin-bottom: 20px;
         }
         .question-meta {
             font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
             color: var(--accent); font-weight: bold; margin-bottom: 10px;
+        }
+
+        /* Destacar as palavras preenchidas dentro do texto */
+        .word-highlight {
+            color: #27ae60;
+            background-color: #e8f8f5;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border-bottom: 3px solid #2ecc71;
+            font-weight: 800;
+            display: inline-block;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* Timer Destaque */
@@ -233,8 +250,8 @@
                 <div class="timer-display" id="timerBox">20</div>
                 <div class="question-text" id="versiculoVText">Sorteie um versículo e complete as lacunas antes do tempo acabar!</div>
                 <span class="reference" id="versiculoVRef"></span>
-                <div class="answer-box" id="versiculoAnswerBox">
-                    <strong>Versículo Completo:</strong> <span id="versiculoAnswerText"></span>
+                <div class="answer-box" id="versiculoAnswerBox" style="text-align: center; font-weight: bold;">
+                    🎉 Lacunas reveladas no texto acima!
                 </div>
             </div>
 
@@ -245,7 +262,7 @@
 
             <div class="controls">
                 <button class="full-width btn-accent" id="btnSortearV" onclick="sortearVersiculo()">Sortear Versículo Aleatório</button>
-                <button id="btnVerRespV" onclick="revelarRespostaVersiculo()" disabled>Revelar Palavras Ocultas</button>
+                <button id="btnVerRespV" onclick="revelarRespostaVersiculo()" disabled>Revelar Palabras Ocultas</button>
                 <button id="btnProxV" onclick="proximaRodadaVersiculo()" disabled>Próxima Rodada</button>
             </div>
         </div>
@@ -298,7 +315,7 @@
             { q: "Qual era a ordem de Neemias sobre onde passar a noite para proteger a cidade?", a: "Todos deveriam passar a noite dentro de Jerusalém.", r: "Neemias 4:22" },
             { q: "Qual o único momento em que Neemias e seus homens tiravam suas roupas?", a: "Apenas para lavar-se (ou cada um ia com sua arma até a água).", r: "Neemias 4:23" },
             { q: "Qual grande clamor social surgiu do povo em Neemias 5?", a: "O clamor dos pobres contra seus irmãos judeus por causa de dívidas e fome.", r: "Neemias 5:1" },
-            { q: "O que alguns judeus ricos confiscaram de seus irmãos necessitados como penhor?", a: "Terras, vinhas, olivais e até os próprios filhos como escravos.", r: "Neemias 5:3-5" },
+            { q: "O que some judeus ricos confiscaram de seus irmãos necessitados como penhor?", a: "Terras, vinhas, olivais e até os próprios filhos como escravos.", r: "Neemias 5:3-5" },
             { q: "Como Neemias reagiu ao ouvir sobre a usura praticada pelos nobres?", a: "Ficou extremamente irado e repreendeu duramente os nobres.", r: "Neemias 5:6-7" },
             { q: "Qual juro abusivo Neemias ordenou que os nobres devolvessem imediatamente?", a: "A centésima parte do dinheiro, do trigo, do vinho e do azeite.", r: "Neemias 5:11" },
             { q: "Que ato simbólico Neemias fez com suas vestes para amaldiçoar quem não cumprisse o acordo?", a: "Sacudiu o seu regaço (suas vestes).", r: "Neemias 5:13" },
@@ -338,20 +355,55 @@
             { q: "Qual lei sobre o sábado Neemias fez cumprir fechando as portas e ameaçando os mercadores?", a: "A proibição de vender mercadorias ou carregar fardos no dia de sábado.", r: "Neemias 13:19" }
         ];
 
-        // BANCO DE DADOS DO MINI-GAME: COMPLETE O VERSÍCULO
+        // BANCO DE DADOS DO MINI-GAME MODIFICADO COM MARCADORES ESPECÍFICOS {0}, {1} PARA SUBSTITUIÇÃO DIRETA
         const bancoVersiculos = [
-            { q: "Disse-lhes mais: Ide, comei as gorduras, e bebei as doçuras, e enviai porções aos que não têm nada preparado para si; porque este dia é consagrado ao nosso Senhor; portanto não vos entristeçais; porque a _______ do _______ é a vossa _______.", a: "alegria - Senhor - força", r: "Neemias 8:10" },
-            { q: "O Deus dos céus é o que nos fará prosperar; e nós, seus servos, nos levantaremos e _______; mas vós não tendes parte, nem justiça, nem _______ em Jerusalém.", a: "edificaremos - memória", r: "Neemias 2:20" },
-            { q: "Lembra-te de mim, Deus meu, para o _______, e não risques as minhas _______ que eu fiz para a casa do meu Deus.", a: "bem - beneficências", r: "Neemias 13:14" },
-            { q: "Assim edificamos o muro, e todo o muro se fechou até a sua _______; porque o coração do povo se inclinava a _______.", a: "metade - trabalhar", r: "Neemias 4:6" },
-            { q: "Ouvindo, pois, Sanbalate, Tobias, os árabes, os amonitas e os asdoditas que o muro ia _______ e as brechas se começavam a _______, iraram-se sobremodo.", a: "crescendo - fechar", r: "Neemias 4:7" },
-            { q: "Lâmpada para os meus pés é tua _______, e luz para o meu _______.", a: "palavra - caminho", r: "Salmos 119:105" },
-            { q: "Porque Deus amou o mundo de tal maneira que deu o seu Filho _______, para que todo aquele que nele crê não _______, mas tenha a vida eterna.", a: "unigênito - pereça", r: "João 3:16" }
+            { 
+                q: "Disse-lhes mais: Ide, comei as gorduras, e bebei as doçuras, e enviai porções aos que não têm nada preparado para si; porque este dia é consagrado ao nosso Senhor; portanto não vos entristeçais; porque a {0} do {1} é a vossa {2}.", 
+                lacunas: ["_______", "_______", "_______"],
+                respostas: ["alegria", "Senhor", "força"], 
+                r: "Neemias 8:10" 
+            },
+            { 
+                q: "O Deus dos céus é o que nos fará prosperar; e nós, seus servos, nos levantaremos e {0}; mas vós não tendes parte, nem justiça, nem {1} em Jerusalém.", 
+                lacunas: ["_______", "_______"],
+                respostas: ["edificaremos", "memória"], 
+                r: "Neemias 2:20" 
+            },
+            { 
+                q: "Lembra-te de mim, Deus meu, para o {0}, e não risques as minhas {1} que eu fiz para a casa do meu Deus.", 
+                lacunas: ["_______", "_______"],
+                respostas: ["bem", "beneficências"], 
+                r: "Neemias 13:14" 
+            },
+            { 
+                q: "Assim edificamos o muro, e todo o muro se fechou até a sua {0}; porque o coração do povo se inclinava a {1}.", 
+                lacunas: ["_______", "_______"],
+                respostas: ["metade", "trabalhar"], 
+                r: "Neemias 4:6" 
+            },
+            { 
+                q: "Ouvindo, pois, Sanbalate, Tobias, os árabes, os amonitas e os asdoditas que o muro ia {0} e as brechas se começavam a {1}, iraram-se sobremodo.", 
+                lacunas: ["_______", "_______"],
+                respostas: ["crescendo", "fechar"], 
+                r: "Neemias 4:7" 
+            },
+            { 
+                q: "Lâmpada para os meus pés é tua {0}, e luz para o meu {1}.", 
+                lacunas: ["_______", "_______"],
+                respostas: ["palavra", "caminho"], 
+                r: "Salmos 119:105" 
+            },
+            { 
+                q: "Porque Deus amou o mundo de tal maneira que deu o seu Filho {0}, para que todo aquele que nele crê não {1}, mas tenha a vida eterna.", 
+                lacunas: ["_______", "_______"],
+                respostas: ["unigênito", "pereça"], 
+                r: "João 3:16" 
+            }
         ];
 
         // VARIÁVEIS DE ESTADO DO JOGO
         let state = {
-            modo: 'neemias', // neemias | versiculo
+            modo: 'neemias', 
             equipe1: 'Equipe Jerusalém',
             equipe2: 'Equipe Muros Fortes',
             pontos1: 0,
@@ -367,20 +419,18 @@
         let timerInterval = null;
         let timeLeft = 20;
 
-        // SISTEMA DE ÁUDIO SINTETIZADO (Não precisa de arquivos externos)
+        // SISTEMA DE ÁUDIO SINTETIZADO
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function tocarSom(tipo) {
             try {
                 if (tipo === 'acerto') {
-                    // Som de Vitória (Duas notas alegres subindo)
-                    playTone(523.25, 0.1, 'sine'); // C5
-                    setTimeout(() => playTone(659.25, 0.2, 'sine'), 100); // E5
+                    playTone(523.25, 0.1, 'sine');
+                    setTimeout(() => playTone(659.25, 0.2, 'sine'), 100);
                 } else if (tipo === 'erro') {
-                    // Som de Erro (Nota grave caindo/vibrando)
                     playTone(150, 0.3, 'sawtooth');
                 }
-            } catch(e) { console.log("Áudio indisponível antes da interação do usuário."); }
+            } catch(e) { console.log("Áudio bloqueado pelo navegador temporariamente."); }
         }
 
         function playTone(freq, duration, type) {
@@ -396,9 +446,9 @@
             osc.stop(audioCtx.currentTime + duration);
         }
 
-        // CARREGAMENTO E SALVAMENTO DE ESTADO SEGURO (ANTI-RESET)
+        // SALVAMENTO PERSISTENTE AUTO-SAVE
         window.onload = function() {
-            const savedState = localStorage.getItem('gincana_biblica_state_v2');
+            const savedState = localStorage.getItem('gincana_biblica_state_v3');
             if (savedState) {
                 state = JSON.parse(savedState);
                 if (state.jogoIniciado) {
@@ -408,14 +458,13 @@
         };
 
         function salvarEstado() {
-            localStorage.setItem('gincana_biblica_state_v2', JSON.stringify(state));
+            localStorage.setItem('gincana_biblica_state_v3', JSON.stringify(state));
         }
 
         function restaurarPartida() {
             document.getElementById('setupScreen').classList.remove('active');
-            document.getElementById('modeNavigation').classList.remove('screen'); // Ativa barra de menus
+            document.getElementById('modeNavigation').classList.remove('screen');
             
-            // Atualiza inputs e labels
             document.getElementById('team1Input').value = state.equipe1;
             document.getElementById('team2Input').value = state.equipe2;
             
@@ -436,7 +485,7 @@
             state.modo = 'neemias';
 
             document.getElementById('setupScreen').classList.remove('active');
-            document.getElementById('modeNavigation').classList.remove('screen'); // Mostra menu de troca de modo
+            document.getElementById('modeNavigation').classList.remove('screen');
             
             atualizarExibicaoPlacares();
             mudarModoJogo('neemias');
@@ -447,7 +496,6 @@
             state.modo = novoModo;
             clearInterval(timerInterval);
             
-            // Reset de classes visuais dos botões do menu
             document.getElementById('btnNavNeemias').classList.remove('btn-accent');
             document.getElementById('btnNavVersiculo').classList.remove('btn-accent');
             document.getElementById('neemiasScreen').classList.remove('active');
@@ -475,7 +523,6 @@
             t2Displays.forEach(el => el.innerText = state.equipe2);
 
             document.getElementById('valTeam1').innerText = state.pontos1;
-            document.getElementById('valTeam2').innerText = state.pontos1; // Back-compatibilidade
             document.getElementById('valTeam1V').innerText = state.pontos1;
             document.getElementById('valTeam2').innerText = state.pontos2;
             document.getElementById('valTeam2V').innerText = state.pontos2;
@@ -484,6 +531,10 @@
         function atualizarContadoresFooter() {
             document.getElementById('countN').innerText = state.restantesNeemias.length;
             document.getElementById('countV').innerText = state.restantesVersiculos.length;
+        }
+
+        function改变Pontos(equipe, valor) {
+            alterarPontos(equipe, valor);
         }
 
         function alterarPontos(equipe, valor) {
@@ -498,7 +549,7 @@
             salvarEstado();
         }
 
-        // FUNÇÕES DO MODO DE PERGUNTAS (NEEMIAS)
+        // MODO NEEMIAS
         function sortearPerguntaNeemias() {
             if (state.restantesNeemias.length === 0) {
                 alert("Todas as perguntas de Neemias deste banco já foram sorteadas!");
@@ -552,7 +603,22 @@
             document.getElementById('btnProxN').disabled = true;
         }
 
-        // FUNÇÕES DO MODO DE JOGO: COMPLETE O VERSÍCULO
+        // LÓGICA DE MONTAGEM DINÂMICA DAS LACUNAS NO TEXTO
+        function renderizarTextoVersiculo(item, revelarRespostas = false) {
+            let textoFormatado = item.q;
+            
+            for(let i = 0; i < item.respostas.length; i++) {
+                if(revelarRespostas) {
+                    // Substitui a marcação pela palavra preenchida com estilo destacado
+                    textoFormatado = textoFormatado.replace(`{${i}}`, `<span class="word-highlight">${item.respostas[i]}</span>`);
+                } else {
+                    // Mantém os sublinhados normais na hora do sorteio
+                    textoFormatado = textoFormatado.replace(`{${i}}`, `<u>&nbsp;&nbsp;&nbsp;&nbsp;_______&nbsp;&nbsp;&nbsp;&nbsp;</u>`);
+                }
+            }
+            return textoFormatado;
+        }
+
         function sortearVersiculo() {
             if (state.restantesVersiculos.length === 0) {
                 alert("Todos os versículos já foram sorteados!");
@@ -563,14 +629,15 @@
 
             const item = state.restantesVersiculos[idx];
             document.getElementById('versiculoVNumber').innerText = "Complete as Lacunas!";
-            document.getElementById('versiculoVText').innerText = item.q;
+            
+            // Renderiza o versículo exibindo os espaços em branco
+            document.getElementById('versiculoVText').innerHTML = renderizarTextoVersiculo(item, false);
             document.getElementById('versiculoVRef').innerText = `Onde se localiza? ${item.r}`;
 
             document.getElementById('btnSortearV').disabled = true;
             document.getElementById('btnVerRespV').disabled = false;
             document.getElementById('btnProxV').disabled = true;
 
-            // Disparar Contador Progressivo/Regressivo
             timeLeft = 20;
             document.getElementById('timerBox').innerText = timeLeft;
             document.getElementById('timerBox').style.color = "var(--danger)";
@@ -595,7 +662,8 @@
             if (state.idxAtual === null) return;
             const item = state.restantesVersiculos[state.idxAtual];
 
-            document.getElementById('versiculoAnswerText').innerText = item.a;
+            // Renderiza novamente injetando as palavras certas direto nos espaços vazios!
+            document.getElementById('versiculoVText').innerHTML = renderizarTextoVersiculo(item, true);
             document.getElementById('versiculoAnswerBox').style.display = 'block';
 
             document.getElementById('btnVerRespV').disabled = true;
@@ -624,10 +692,9 @@
             document.getElementById('btnProxV').disabled = true;
         }
 
-        // SISTEMA DE ANIMAÇÕES INTERATIVAS (ACERTOU / ERROU)
+        // SISTEMA DE ANIMAÇÕES INTERATIVAS
         function notificarAcerto() {
             tocarSom('acerto');
-            // Dispara rajadas de confetes na tela do usuário
             confetti({
                 particleCount: 120,
                 spread: 80,
@@ -638,21 +705,18 @@
         function notificarErro() {
             tocarSom('erro');
             const cardAtivo = state.modo === 'neemias' ? document.getElementById('neemiasCard') : document.getElementById('versiculoCard');
-            
-            // Aplica efeito tremor
             cardAtivo.classList.add('shake-animation');
             setTimeout(() => {
                 cardAtivo.classList.remove('shake-animation');
             }, 450);
         }
 
-        // SAFETY CONTROL: RESET TOTAL DA GINCANA DO ZERO
         function perguntarReiniciarDoZero() {
-            const conf = confirm("⚠️ ATENÇÃO: Tem certeza absoluta que quer deletar o placar e restaurar todas as 70+ perguntas de Neemias? Isso reiniciará o jogo do zero!");
+            const conf = confirm("⚠️ ATENÇÃO: Tem certeza absoluta que quer deletar o placar e restaurar todas as perguntas? Isso reiniciará o jogo do zero!");
             if (conf) {
-                localStorage.removeItem('gincana_biblica_state_v2');
+                localStorage.removeItem('gincana_biblica_state_v3');
                 clearInterval(timerInterval);
-                location.reload(); // Recarrega limpo para tela de setup
+                location.reload();
             }
         }
     </script>
