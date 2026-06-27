@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gincana Bíblica - Livro de Neemias</title>
+    <title>Super Gincana Bíblica - Neemias & Versículos</title>
+    <!-- Biblioteca para animação de confetes no acerto -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg-color: #f4f7f6;
+            --bg-color: #f0f4f8;
             --card-bg: #ffffff;
             --primary: #2c3e50;
-            --accent: #d35400;
-            --success: #27ae60;
-            --text: #333333;
+            --accent: #e67e22;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --text: #2c3e50;
         }
 
         body {
@@ -27,153 +30,130 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background: var(--card-bg);
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             margin-bottom: 20px;
+            position: relative;
         }
 
         h1, h2, h3 {
             text-align: center;
             color: var(--primary);
-        }
-
-        .setup-section, .game-section {
-            display: none;
-        }
-
-        .active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        button:hover {
-            background-color: #1a252f;
-        }
-
-        button.accent {
-            background-color: var(--accent);
-        }
-
-        button.accent:hover {
-            background-color: #b33900;
-        }
-
-        /* Placar */
-        .scoreboard {
-            display: flex;
-            justify-content: space-around;
-            background: #eef2f3;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            border: 1px solid #dcdde1;
-        }
-
-        .team-score {
-            text-align: center;
-            flex: 1;
-        }
-
-        .team-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .score-val {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--accent);
             margin: 5px 0;
         }
 
-        /* Painel de Perguntas */
+        .screen { display: none; }
+        .active { display: block; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="text"] {
+            width: 100%; padding: 12px; border: 2px solid #cbd5e1;
+            border-radius: 8px; box-sizing: border-box; font-size: 16px;
+        }
+
+        button {
+            background-color: var(--primary); color: white; border: none;
+            padding: 14px 20px; border-radius: 8px; cursor: pointer;
+            font-size: 16px; font-weight: bold; transition: all 0.2s;
+        }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:disabled { background-color: #cbd5e1; cursor: not-allowed; transform: none; }
+        .btn-accent { background-color: var(--accent); }
+        .btn-success { background-color: var(--success); }
+        .btn-danger { background-color: var(--danger); }
+
+        /* Menu de Modos de Jogo */
+        .mode-nav {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;
+        }
+
+        /* Placar Premium */
+        .scoreboard {
+            display: flex; justify-content: space-around; background: #f8fafc;
+            padding: 15px; border-radius: 12px; margin-bottom: 25px;
+            border: 2px solid #e2e8f0;
+        }
+        .team-score { text-align: center; flex: 1; }
+        .team-name { font-size: 20px; font-weight: bold; color: var(--primary); }
+        .score-val { font-size: 42px; font-weight: 900; color: var(--accent); margin: 5px 0; }
+
+        /* DESTAQUE MÁXIMO DA PERGUNTA */
         .question-card {
-            border: 2px solid #eef2f3;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            background: #fafbfc;
+            border: 3px solid var(--primary);
+            padding: 35px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            background: #ffffff;
+            box-shadow: 0 8px 24px rgba(44, 62, 80, 0.12);
+            text-align: center;
+            transition: all 0.3s ease;
         }
-
         .question-text {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 15px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a252f;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        .question-meta {
+            font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+            color: var(--accent); font-weight: bold; margin-bottom: 10px;
         }
 
-        .reference {
-            font-style: italic;
-            color: #7f8c8d;
-            margin-bottom: 15px;
-            display: block;
+        /* Timer Destaque */
+        .timer-display {
+            font-size: 48px; font-weight: 900; color: var(--danger);
+            text-align: center; margin: 10px 0; font-family: monospace;
         }
+
+        .reference { font-style: italic; color: #64748b; font-size: 16px; display: block; margin-top: 10px;}
 
         .answer-box {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 15px;
-            font-weight: bold;
-            border-left: 5px solid var(--success);
+            display: none; background: #ecfdf5; color: #065f46;
+            padding: 20px; border-radius: 8px; margin-top: 20px;
+            font-size: 18px; border-left: 6px solid var(--success); text-align: left;
         }
 
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
-        }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .full-width { grid-column: span 2; }
 
-        .full-width {
-            grid-column: span 2;
+        /* Animação de Erro (Tremor) */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        .shake-animation { animation: shake 0.4s ease-in-out; border-color: var(--danger) !important; }
+
+        /* Rodapé de Reset */
+        .system-footer {
+            margin-top: 30px; display: flex; justify-content: space-between;
+            align-items: center; border-top: 1px solid #e2e8f0; padding-top: 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🏆 Gincana Bíblica 🏆</h1>
-        <h2>Livro de Neemias</h2>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <div class="container" id="mainContainer">
+        <div id="gameHeader">
+            <h1>🏆 Gincana Bíblica Real-Time 🏆</h1>
+            <h2 id="currentGameModeTitle">Livro de Neemias</h2>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
 
-        <!-- TELA DE CONFIGURAÇÃO INICIAL -->
-        <div id="setupScreen" class="setup-section active">
-            <h3>Configuração das Equipes</h3>
+        <!-- NAVEGAÇÃO DE MODOS -->
+        <div class="mode-nav screen" id="modeNavigation">
+            <button onclick="mudarModoJogo('neemias')" id="btnNavNeemias" class="btn-accent">Perguntas de Neemias</button>
+            <button onclick="mudarModoJogo('versiculo')" id="btnNavVersiculo">Complete o Versículo</button>
+        </div>
+
+        <!-- TELA 1: CONFIGURAÇÃO INICIAL -->
+        <div id="setupScreen" class="screen active">
+            <h3>Cadastro das Equipes</h3>
             <div class="form-group">
                 <label for="team1Input">Nome da Equipe 1:</label>
                 <input type="text" id="team1Input" value="Equipe Jerusalém">
@@ -182,156 +162,497 @@
                 <label for="team2Input">Nome da Equipe 2:</label>
                 <input type="text" id="team2Input" value="Equipe Muros Fortes">
             </div>
-            <button onclick="iniciarJogo()">Começar Gincana</button>
+            <button class="full-width btn-success" style="font-size: 18px;" onclick="iniciarJogo()">Iniciar Gincana</button>
         </div>
 
-        <!-- TELA DO JOGO -->
-        <div id="gameScreen" class="game-section">
-            <!-- Painel de Pontos -->
+        <!-- TELA 2: MODO PERGUNTAS (NEEMIAS) -->
+        <div id="neemiasScreen" class="screen">
+            <!-- Placar Integrado -->
             <div class="scoreboard">
-                <div class="team-score" id="scoreBlock1">
-                    <div class="team-name" id="nameTeam1">Equipe 1</div>
+                <div class="team-score">
+                    <div class="team-name t1-display">Equipe 1</div>
                     <div class="score-val" id="valTeam1">0</div>
-                    <div style="display: flex; gap: 5px; justify-content: center;">
-                        <button style="padding: 5px 10px; width: auto;" onclick="alterarPontos(1, 10)">+10</button>
-                        <button style="padding: 5px 10px; width: auto; background:#c0392b;" onclick="alterarPontos(1, -10)">-10</button>
-                    </div>
+                    <button class="btn-success" onclick="alterarPontos(1, 10)">+10</button>
+                    <button class="btn-danger" onclick="alterarPontos(1, -10)">-10</button>
                 </div>
-                <div style="border-left: 1px solid #ccc; margin: 0 10px;"></div>
-                <div class="team-score" id="scoreBlock2">
-                    <div class="team-name" id="nameTeam2">Equipe 2</div>
+                <div style="border-left: 2px solid #e2e8f0; margin: 0 15px;"></div>
+                <div class="team-score">
+                    <div class="team-name t2-display">Equipe 2</div>
                     <div class="score-val" id="valTeam2">0</div>
-                    <div style="display: flex; gap: 5px; justify-content: center;">
-                        <button style="padding: 5px 10px; width: auto;" onclick="alterarPontos(2, 10)">+10</button>
-                        <button style="padding: 5px 10px; width: auto; background:#c0392b;" onclick="alterarPontos(2, -10)">-10</button>
-                    </div>
+                    <button class="btn-success" onclick="alterarPontos(2, 10)">+10</button>
+                    <button class="btn-danger" onclick="alterarPontos(2, -10)">-10</button>
                 </div>
             </div>
 
-            <!-- Área da Pergunta Atual -->
-            <div class="question-card">
-                <div style="font-weight: bold; color: var(--accent); margin-bottom: 5px;" id="questionNumber">Pergunta</div>
-                <div class="question-text" id="questionText">Clique no botão abaixo para sortear a primeira pergunta.</div>
-                <span class="reference" id="questionRef"></span>
-                
-                <div class="answer-box" id="answerBox">
-                    <strong>Resposta Correta:</strong> <span id="answerText"></span>
+            <!-- CARD DE PERGUNTA SUPER DESTACADO -->
+            <div class="question-card" id="neemiasCard">
+                <div class="question-meta" id="neemiasQNumber">Pronto para Jogar</div>
+                <div class="question-text" id="neemiasQText">Clique abaixo para sortear a primeira pergunta sobre Neemias.</div>
+                <span class="reference" id="neemiasQRef"></span>
+                <div class="answer-box" id="neemiasAnswerBox">
+                    <strong>Resposta Oficial:</strong> <span id="neemiasAnswerText"></span>
                 </div>
             </div>
 
-            <!-- Botões de Ação do Jogo -->
+            <!-- Controles Auxiliares de Validação Visual/Sonora -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="btn-success" style="flex:1;" onclick="notificarAcerto()">Acertou! 🎉</button>
+                <button class="btn-danger" style="flex:1;" onclick="notificarErro()">Errou! 😢</button>
+            </div>
+
+            <!-- Controles Primários do Jogo -->
             <div class="controls">
-                <button class="full-width accent" id="btnSortear" onclick="sortearPergunta()">Sortear Pergunta Aleatória</button>
-                <button id="btnVerResposta" onclick="revelarResposta()" disabled>Revelar Resposta</button>
-                <button id="btnProxima" onclick="limparPainel()" disabled>Próxima Rodada</button>
+                <button class="full-width btn-accent" id="btnSortearN" onclick="sortearPerguntaNeemias()">Sortear Pergunta Aleatória</button>
+                <button id="btnVerRespN" onclick="revelarRespostaNeemias()" disabled>Revelar Resposta</button>
+                <button id="btnProxN" onclick="proximaRodadaNeemias()" disabled>Próxima Rodada</button>
             </div>
-            
-            <div style="text-align: center; margin-top: 20px; color: #7f8c8d; font-size: 14px;">
-                Perguntas restantes no banco: <span id="contadorRestantes">0</span>
+        </div>
+
+        <!-- TELA 3: MODO COMPLETE O VERSÍCULO -->
+        <div id="versiculoScreen" class="screen">
+            <!-- Placar Integrado Espelhado -->
+            <div class="scoreboard">
+                <div class="team-score">
+                    <div class="team-name t1-display">Equipe 1</div>
+                    <div class="score-val" id="valTeam1V">0</div>
+                    <button class="btn-success" onclick="alterarPontos(1, 15)">+15</button>
+                    <button class="btn-danger" onclick="alterarPontos(1, -15)">-15</button>
+                </div>
+                <div style="border-left: 2px solid #e2e8f0; margin: 0 15px;"></div>
+                <div class="team-score">
+                    <div class="team-name t2-display">Equipe 2</div>
+                    <div class="score-val" id="valTeam2V">0</div>
+                    <button class="btn-success" onclick="alterarPontos(2, 15)">+15</button>
+                    <button class="btn-danger" onclick="alterarPontos(2, -15)">-15</button>
+                </div>
             </div>
+
+            <!-- CARD DO VERSÍCULO SUPER DESTACADO -->
+            <div class="question-card" id="versiculoCard">
+                <div class="question-meta" id="versiculoVNumber">Desafio Cronometrado</div>
+                <div class="timer-display" id="timerBox">20</div>
+                <div class="question-text" id="versiculoVText">Sorteie um versículo e complete as lacunas antes do tempo acabar!</div>
+                <span class="reference" id="versiculoVRef"></span>
+                <div class="answer-box" id="versiculoAnswerBox">
+                    <strong>Versículo Completo:</strong> <span id="versiculoAnswerText"></span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="btn-success" style="flex:1;" onclick="notificarAcerto()">Acertou! 🎉</button>
+                <button class="btn-danger" style="flex:1;" onclick="notificarErro()">Errou! 😢</button>
+            </div>
+
+            <div class="controls">
+                <button class="full-width btn-accent" id="btnSortearV" onclick="sortearVersiculo()">Sortear Versículo Aleatório</button>
+                <button id="btnVerRespV" onclick="revelarRespostaVersiculo()" disabled>Revelar Palavras Ocultas</button>
+                <button id="btnProxV" onclick="proximaRodadaVersiculo()" disabled>Próxima Rodada</button>
+            </div>
+        </div>
+
+        <!-- PAINEL DE CONTROLE DE SEGURANÇA E REINÍCIO -->
+        <div class="system-footer">
+            <div style="font-size: 14px; color: #64748b;">
+                Restantes no Banco - Neemias: <span id="countN">0</span> | Versículos: <span id="countV">0</span>
+            </div>
+            <!-- Botão de Reinício Total -->
+            <button class="btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="perguntarReiniciarDoZero()">🔄 Resetar Toda Gincana</button>
         </div>
     </div>
 
     <script>
-        // BANCO DE DADOS DE PERGUNTAS (Exemplo estruturado para Neemias)
-        // Adicione mais perguntas neste array seguindo rigorosamente a mesma estrutura.
-        const bancoDePerguntas = [
-            { q: "Qual era a função ocupada por Neemias na corte do rei Artaxerxes?", a: "Copeiro do rei.", r: "Neemias 1:11" },
-            { q: "Quem trouxe as notícias a Neemias sobre a situação de miséria e os muros caídos de Jerusalém?", a: "Hanani, um de seus irmãos, junto com alguns homens de Judá.", r: "Neemias 1:2" },
-            { q: "Qual foi a primeira reação de Neemias ao ouvir sobre a destruição de Jerusalém?", a: "Chorou, lamentou por alguns dias, jejuou e orou diante do Deus dos céus.", r: "Neemias 1:4" },
-            { q: "Em qual cidade fortificada (capital de inverno) Neemias estava quando recebeu as notícias?", a: "Na cidadela de Susã.", r: "Neemias 1:1" },
-            { q: "Qual era o nome do rei a quem Neemias servia?", a: "Artaxerxes.", r: "Neemias 1:1" },
-            { q: "Por que o rei percebeu que havia algo de errado com Neemias?", a: "Porque o rosto de Neemias estava triste, algo que nunca havia acontecido antes na presença do rei.", r: "Neemias 2:1-2" },
-            { q: "Quais são os nomes dos dois principais opositores que zombaram e desprezaram os judeus no início da reconstrução?", a: "Sanbalate, o horonita, e Tobias, o oficial amonita.", r: "Neemias 2:10" },
-            { q: "Quantos dias Neemias ficou em Jerusalém antes de sair à noite para examinar os muros destruídos?", a: "Três dias.", r: "Neemias 2:11" },
-            { q: "Que animal Neemias montava enquanto inspecionava os muros caídos de Jerusalém à noite?", a: "Um animal de montaria (geralmente traduzido como jumento ou mula).", r: "Neemias 2:12" },
-            { q: "Qual oficial declarou zombando que se uma raposa subisse no muro de pedra dos judeus, ela o derrubaria?", a: "Tobias, o amonita.", r: "Neemias 4:3" },
-            { q: "Como os trabalhadores se dividiram para trabalhar em segurança após as ameaças de ataques dos inimigos?", a: "Metade trabalhava na obra e a outra metade segurava lanças, escudos, arcos e couraças.", r: "Neemias 4:16" },
-            { q: "Como os reconstrutores que carregavam materiais trabalhavam com relação às armas?", a: "Com uma das mãos faziam a obra e com a outra seguravam a arma.", r: "Neemias 4:17" },
-            { q: "O que o homem que ficava ao lado de Neemias segurava para dar alarme caso houvesse ataque?", a: "Uma trombeta (ou buzina).", r: "Neemias 4:18" },
-            { q: "Em quantos dias os muros de Jerusalém foram totalmente concluídos?", a: "Em 52 dias.", r: "Neemias 6:15" },
-            { q: "Qual era o nome do mês em que a muralha foi terminada?", a: "Mês de Elul.", r: "Neemias 6:15" },
-            { q: "Quem era o escriba que leu o Livro da Lei do Senhor para todo o povo na praça?", a: "Esdras.", r: "Neemias 8:1" }
-            // Nota: Você pode expandir este array até completar as 70+ questões desejadas.
+        // BANCO DE DADOS DE NEEMIAS AMPLIADO (MAIS DE 70 PERGUNTAS AUTÊNTICAS)
+        const totalBancoNeemias = [
+            { q: "Qual era a função de confiança que Neemias exercia diante do rei Artaxerxes?", a: "Copeiro do rei.", r: "Neemias 1:11" },
+            { q: "Quem trouxe as tristes notícias sobre a situação caótica de Jerusalém para Neemias?", a: "Hanani, um de seus irmãos, junto com alguns homens de Judá.", r: "Neemias 1:2" },
+            { q: "Qual foi a tripla reação de Neemias ao ouvir que os muros estavam caídos e as portas queimadas?", a: "Chorou/lamentou, jejuou e orou diante de Deus.", r: "Neemias 1:4" },
+            { q: "Em qual palácio real ou cidadela fortificada Neemias residia originalmente?", a: "Na cidadela de Susã.", r: "Neemias 1:1" },
+            { q: "Em qual ano do reinado de Artaxerxes Neemias recebeu as notícias de Jerusalém?", a: "No vigésimo ano.", r: "Neemias 1:1" },
+            { q: "Em qual mês do calendário judaico Neemias iniciou suas orações por Jerusalém?", a: "Mês de Quisleu.", r: "Neemias 1:1" },
+            { q: "Qual o mês bíblico em que Neemias finalmente falou com o rei sobre sua tristeza?", a: "Mês de Nisã.", r: "Neemias 2:1" },
+            { q: "O que o rei percebeu na fisionomia de Neemias que o levou a interrogá-lo?", a: "A tristeza em seu semblante, algo incomum.", r: "Neemias 2:2" },
+            { q: "Quem estava assentada ao lado do rei Artaxerxes quando Neemias fez o pedido para viajar?", a: "A rainha.", r: "Neemias 2:6" },
+            { q: "O que Neemias pediu ao rei para garantir sua segurança na viagem até Judá?", a: "Cartas para os governadores de além do Rio (Eufrates).", r: "Neemias 2:7" },
+            { q: "Quem era o guarda da floresta do rei a quem Neemias pediu madeira?", a: "Asafe.", r: "Neemias 2:8" },
+            { q: "Quais os dois principais líderes opositores que ficaram muito descontentes com a vinda de Neemias?", a: "Sanbalate, o horonita, e Tobias, o oficial amonita.", r: "Neemias 2:10" },
+            { q: "Quantos dias Neemias passou em Jerusalém em absoluto segredo antes de inspecionar os muros?", a: "Três dias.", r: "Neemias 2:11" },
+            { q: "Em que período do dia Neemias saiu para inspecionar as ruínas de Jerusalém pela primeira vez?", a: "De noite.", r: "Neemias 2:12" },
+            { q: "Que obstáculo físico impediu a montaria de Neemias de passar durante a inspeção?", a: "O entulho das ruínas perto da Fonte do Rei.", r: "Neemias 2:14" },
+            { q: "Além de Sanbalate e Tobias, qual líder árabe zombou dos judeus?", a: "Gesém, o árabe.", r: "Neemias 2:19" },
+            { q: "Qual sumo sacerdote se levantou com seus irmãos para reconstruir a Porta das Ovelhas?", a: "Eliasibe.", r: "Neemias 3:1" },
+            { q: "Quem reconstruiu a Porta do Peixe?", a: "Os filhos de Hassenaá.", r: "Neemias 3:3" },
+            { q: "Quais nobres locais se recusaram a carregar o fardo e ajudar no trabalho de seus senhores?", a: "Os nobres de Tecoa.", r: "Neemias 3:5" },
+            { q: "Quem reparou a Porta do Vale e morava em Zanoa?", a: "Hanum e os moradores de Zanoa.", r: "Neemias 3:13" },
+            { q: "Quem reparou a Porta do Monturo (ou do Esterco)?", a: "Malquias, filho de Recabe.", r: "Neemias 3:14" },
+            { q: "Qual era a expressão furiosa que Sanbalate usou para zombar chamando os construtores judeus?", a: "Fracos judeus.", r: "Neemias 4:2" },
+            { q: "Tobias afirmou que até mesmo qual pequeno animal derrubaria os muros de pedra construídos?", a: "Uma raposa.", r: "Neemias 4:3" },
+            { q: "Até qual proporção da altura total os muros foram unidos inicialmente pelo povo?", a: "Até a metade da sua altura.", r: "Neemias 4:6" },
+            { q: "O que o povo tinha no coração que motivou a continuidade acelerada da obra?", a: "Ânimo (ou desejo) para trabalhar.", r: "Neemias 4:6" },
+            { q: "Quais povos se uniram a Sanbalate e Tobias para planejar um ataque surpresa contra Jerusalém?", a: "Os árabes, os amonitas e os asdoditas.", r: "Neemias 4:7" },
+            { q: "Qual estratégia de segurança armada contínua Neemias adotou contra as ameaças?", a: "Postou guardas de dia e de noite.", r: "Neemias 4:9" },
+            { q: "Quantas vezes os judeus vizinhos alertaram Neemias sobre os planos de ataque inimigos?", a: "Dez vezes.", r: "Neemias 4:12" },
+            { q: "Quais armas a metade dos jovens segurava enquanto a outra metade trabalhava?", a: "Lanças, escudos, arcos e couraças.", r: "Neemias 4:16" },
+            { q: "Como trabalhavam os carregadores de cargas com relação à segurança?", a: "Com uma das mãos faziam a obra e com a outra seguravam a arma.", r: "Neemias 4:17" },
+            { q: "Por que os construtores trabalhavam com a espada cingida à cintura?", a: "Para estarem prontos para o combate a qualquer momento enquanto edificavam.", r: "Neemias 4:18" },
+            { q: "Quem ficava o tempo todo ao lado de Neemias para coordenar o povo?", a: "O tocador de trombeta (ou buzina).", r: "Neemias 4:18" },
+            { q: "Qual era a ordem de Neemias sobre onde passar a noite para proteger a cidade?", a: "Todos deveriam passar a noite dentro de Jerusalém.", r: "Neemias 4:22" },
+            { q: "Qual o único momento em que Neemias e seus homens tiravam suas roupas?", a: "Apenas para lavar-se (ou cada um ia com sua arma até a água).", r: "Neemias 4:23" },
+            { q: "Qual grande clamor social surgiu do povo em Neemias 5?", a: "O clamor dos pobres contra seus irmãos judeus por causa de dívidas e fome.", r: "Neemias 5:1" },
+            { q: "O que alguns judeus ricos confiscaram de seus irmãos necessitados como penhor?", a: "Terras, vinhas, olivais e até os próprios filhos como escravos.", r: "Neemias 5:3-5" },
+            { q: "Como Neemias reagiu ao ouvir sobre a usura praticada pelos nobres?", a: "Ficou extremamente irado e repreendeu duramente os nobres.", r: "Neemias 5:6-7" },
+            { q: "Qual juro abusivo Neemias ordenou que os nobres devolvessem imediatamente?", a: "A centésima parte do dinheiro, do trigo, do vinho e do azeite.", r: "Neemias 5:11" },
+            { q: "Que ato simbólico Neemias fez com suas vestes para amaldiçoar quem não cumprisse o acordo?", a: "Sacudiu o seu regaço (suas vestes).", r: "Neemias 5:13" },
+            { q: "Por quantos anos Neemias governou a terra de Judá sem comer o pão devido ao governador?", a: "Doze anos.", r: "Neemias 5:14" },
+            { q: "Quantas pessoas comiam diariamente à mesa de Neemias às suas custas?", a: "Cento e cinquenta judeus e oficiais.", r: "Neemias 5:17" },
+            { q: "Qual animal era preparado de dez em dez dias para o sustento da mesa de Neemias?", a: "Muitas aves e variedade de vinhos.", r: "Neemias 5:18" },
+            { q: "Em qual vale os inimigos convidaram Neemias quatro vezes para uma reunião de emboscada?", a: "No vale de Ono (nas aldeias).", r: "Neemias 6:2" },
+            { q: "Qual frase célebre Neemias enviou como resposta para recusar parar a obra?", a: "Estou fazendo uma grande obra, de modo que não poderei descer.", r: "Neemias 6:3" },
+            { q: "O que continha de especial a quinta mensagem enviada por Sanbalate por meio de seu servo?", a: "Uma carta aberta.", r: "Neemias 6:5" },
+            { q: "Qual era a acusação falsa contida na carta aberta de Sanbalate?", a: "De que Neemias e os judeus planejavam se rebelar e que ele seria o rei.", r: "Neemias 6:6" },
+            { q: "Quem foi o profeta pago para tentar amedrontar Neemias e fazê-lo pecar escondendo-se no Templo?", a: "Semaías, filho de Delaías.", r: "Neemias 6:10" },
+            { q: "Qual profetisa liderava o grupo que tentava aterrorizar Neemias?", a: "Noadia.", r: "Neemias 6:14" },
+            { q: "Em quantos dias exatos a muralha de Jerusalém foi totalmente finalizada?", a: "Cinquenta e dois dias.", r: "Neemias 6:15" },
+            { q: "Em qual dia do mês de Elul a grande obra do muro terminou?", a: "No dia vinte e cinco de Elul.", r: "Neemias 6:15" },
+            { q: "Qual o impacto espiritual que a conclusão do muro gerou nos povos inimigos vizinhos?", a: "Abateram-se e reconheceram que a obra foi feita com o auxílio de Deus.", r: "Neemias 6:16" },
+            { q: "Quem mantinha correspondência secreta com os nobres de Judá por ser genro de Secanias?", a: "Tobias, o amonita.", r: "Neemias 6:17-18" },
+            { q: "A quem Neemias deu o comando de Jerusalém logo após a edificação dos muros?", a: "A seu irmão Hanani e a Hananias, maioral do castelo.", r: "Neemias 7:2" },
+            { q: "Qual era a principal qualidade de Hananias mencionada para receber o comando?", a: "Homem fiel e temente a Deus mais do que muitos outros.", r: "Neemias 7:2" },
+            { q: "Qual era o critério para abertura das portas de Jerusalém segundo a ordem de Neemias?", a: "Não abrir até que o sol esquentasse.", r: "Neemias 7:3" },
+            { q: "O que Deus pôs no coração de Neemias para organizar o povo após o muro estar pronto?", a: "Reunir os nobres, oficiais e o povo para registrar suas genealogias.", r: "Neemias 7:5" },
+            { q: "Quem era o escriba que liderou o avivamento trazendo o Livro da Lei na praça?", a: "Esdras.", r: "Neemias 8:1" },
+            { q: "Onde o povo se reuniu em massa para ouvir a leitura pública da palavra de Deus?", a: "Na praça, diante da Porta das Águas.", r: "Neemias 8:1" },
+            { q: "Sobre o que Esdras subiu para ler a lei de forma bem visível a todos?", a: "Um púlpito (ou plataforma) de madeira.", r: "Neemias 8:4" },
+            { q: "Qual foi a reação imediata do povo quando Esdras abriu o Livro da Lei?", a: "Todo o povo se pôs em pé.", r: "Neemias 8:5" },
+            { q: "O que o povo respondeu erguendo as mãos em adoração após a oração de Esdras?", a: "Amém! Amém!", r: "Neemias 8:6" },
+            { q: "Qual frase reconfortante Neemias e Esdras disseram ao povo que chorava ao ouvir a lei?", a: "A alegria do Senhor é a vossa força.", r: "Neemias 8:10" },
+            { q: "Qual festa bíblica esquecida foi celebrada com ramagens no teto das casas em Neemias 8?", a: "A Festa das Cabanas (ou dos Tabernáculos).", r: "Neemias 8:14" },
+            { q: "Desde os dias de quem os filhos de Israel não celebravam essa festa daquela maneira?", a: "Desde os dias de Josué, filho de Num.", r: "Neemias 8:17" },
+            { q: "No dia 24 daquele mês, como o povo se reuniu para confessar seus pecados?", a: "Com jejum, sacos e terra sobre a cabeça.", r: "Neemias 9:1" },
+            { q: "Por quanto tempo do dia leram o livro da lei e por quanto tempo confessaram e adoraram?", a: "Uma quarta parte do dia leram, e outra quarta parte confessaram.", r: "Neemias 9:3" },
+            { q: "Quem liderou a assinatura do pacto de fidelidade colocando seu nome em primeiro lugar?", a: "Neemias, o governador (filho de Hacalias).", r: "Neemias 10:1" },
+            { q: "Qual compromisso severo sobre casamento foi firmado no pacto solene?", a: "Não dar as filhas aos povos da terra nem tomar as filhas deles.", r: "Neemias 10:30" },
+            { q: "Como o povo decidiu povoar a cidade santa de Jerusalém, que estava vazia?", a: "Sorteando um de cada dez para morar em Jerusalém.", r: "Neemias 11:1" },
+            { q: "Que instrumento musical foi usado com grande júbilo na dedicação dos muros?", a: "Címbalos, alaúdes, harpas e trombetas.", r: "Neemias 12:27" },
+            { q: "Durante a ausência de Neemias, que quarto especial dentro do templo o sacerdote Eliasibe cedeu para Tobias?", a: "A grande câmara onde antes se guardavam as ofertas de manjares e dízimos.", r: "Neemias 13:4-5" },
+            { q: "O que Neemias fez com os móveis de Tobias ao retornar e ver o sacrilégio no Templo?", a: "Lançou todos os móveis de Tobias para fora da câmara.", r: "Neemias 13:8" },
+            { q: "Qual lei sobre o sábado Neemias fez cumprir fechando as portas e ameaçando os mercadores?", a: "A proibição de vender mercadorias ou carregar fardos no dia de sábado.", r: "Neemias 13:19" }
         ];
 
-        let perguntasDisponiveis = [...bancoDePerguntas];
-        let perguntaAtual = null;
-        let pontosEquipe1 = 0;
-        let pontosEquipe2 = 0;
-        let contadorPerguntasRespondidas = 0;
+        // BANCO DE DADOS DO MINI-GAME: COMPLETE O VERSÍCULO
+        const bancoVersiculos = [
+            { q: "Disse-lhes mais: Ide, comei as gorduras, e bebei as doçuras, e enviai porções aos que não têm nada preparado para si; porque este dia é consagrado ao nosso Senhor; portanto não vos entristeçais; porque a _______ do _______ é a vossa _______.", a: "alegria - Senhor - força", r: "Neemias 8:10" },
+            { q: "O Deus dos céus é o que nos fará prosperar; e nós, seus servos, nos levantaremos e _______; mas vós não tendes parte, nem justiça, nem _______ em Jerusalém.", a: "edificaremos - memória", r: "Neemias 2:20" },
+            { q: "Lembra-te de mim, Deus meu, para o _______, e não risques as minhas _______ que eu fiz para a casa do meu Deus.", a: "bem - beneficências", r: "Neemias 13:14" },
+            { q: "Assim edificamos o muro, e todo o muro se fechou até a sua _______; porque o coração do povo se inclinava a _______.", a: "metade - trabalhar", r: "Neemias 4:6" },
+            { q: "Ouvindo, pois, Sanbalate, Tobias, os árabes, os amonitas e os asdoditas que o muro ia _______ e as brechas se começavam a _______, iraram-se sobremodo.", a: "crescendo - fechar", r: "Neemias 4:7" },
+            { q: "Lâmpada para os meus pés é tua _______, e luz para o meu _______.", a: "palavra - caminho", r: "Salmos 119:105" },
+            { q: "Porque Deus amou o mundo de tal maneira que deu o seu Filho _______, para que todo aquele que nele crê não _______, mas tenha a vida eterna.", a: "unigênito - pereça", r: "João 3:16" }
+        ];
+
+        // VARIÁVEIS DE ESTADO DO JOGO
+        let state = {
+            modo: 'neemias', // neemias | versiculo
+            equipe1: 'Equipe Jerusalém',
+            equipe2: 'Equipe Muros Fortes',
+            pontos1: 0,
+            pontos2: 0,
+            restantesNeemias: [],
+            restantesVersiculos: [],
+            idxAtual: null,
+            respondidasContador: 0,
+            jogoIniciado: false
+        };
+
+        // CONTROLE DO TIMER DO VERSÍCULO
+        let timerInterval = null;
+        let timeLeft = 20;
+
+        // SISTEMA DE ÁUDIO SINTETIZADO (Não precisa de arquivos externos)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function tocarSom(tipo) {
+            try {
+                if (tipo === 'acerto') {
+                    // Som de Vitória (Duas notas alegres subindo)
+                    playTone(523.25, 0.1, 'sine'); // C5
+                    setTimeout(() => playTone(659.25, 0.2, 'sine'), 100); // E5
+                } else if (tipo === 'erro') {
+                    // Som de Erro (Nota grave caindo/vibrando)
+                    playTone(150, 0.3, 'sawtooth');
+                }
+            } catch(e) { console.log("Áudio indisponível antes da interação do usuário."); }
+        }
+
+        function playTone(freq, duration, type) {
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // CARREGAMENTO E SALVAMENTO DE ESTADO SEGURO (ANTI-RESET)
+        window.onload = function() {
+            const savedState = localStorage.getItem('gincana_biblica_state_v2');
+            if (savedState) {
+                state = JSON.parse(savedState);
+                if (state.jogoIniciado) {
+                    restaurarPartida();
+                }
+            }
+        };
+
+        function salvarEstado() {
+            localStorage.setItem('gincana_biblica_state_v2', JSON.stringify(state));
+        }
+
+        function restaurarPartida() {
+            document.getElementById('setupScreen').classList.remove('active');
+            document.getElementById('modeNavigation').classList.remove('screen'); // Ativa barra de menus
+            
+            // Atualiza inputs e labels
+            document.getElementById('team1Input').value = state.equipe1;
+            document.getElementById('team2Input').value = state.equipe2;
+            
+            atualizarExibicaoPlacares();
+            mudarModoJogo(state.modo);
+            atualizarContadoresFooter();
+        }
 
         function iniciarJogo() {
-            const nome1 = document.getElementById('team1Input').value.trim() || "Equipe 1";
-            const nome2 = document.getElementById('team2Input').value.trim() || "Equipe 2";
-
-            document.getElementById('nameTeam1').innerText = nome1;
-            document.getElementById('nameTeam2').innerText = nome2;
+            state.equipe1 = document.getElementById('team1Input').value.trim() || "Equipe 1";
+            state.equipe2 = document.getElementById('team2Input').value.trim() || "Equipe 2";
+            state.pontos1 = 0;
+            state.pontos2 = 0;
+            state.restantesNeemias = [...totalBancoNeemias];
+            state.restantesVersiculos = [...bancoVersiculos];
+            state.respondidasContador = 0;
+            state.jogoIniciado = true;
+            state.modo = 'neemias';
 
             document.getElementById('setupScreen').classList.remove('active');
-            document.getElementById('gameScreen').classList.add('active');
+            document.getElementById('modeNavigation').classList.remove('screen'); // Mostra menu de troca de modo
             
-            atualizarContador();
+            atualizarExibicaoPlacares();
+            mudarModoJogo('neemias');
+            salvarEstado();
         }
 
-        function atualizarContador() {
-            document.getElementById('contadorRestantes').innerText = perguntasDisponiveis.length;
-        }
+        function mudarModoJogo(novoModo) {
+            state.modo = novoModo;
+            clearInterval(timerInterval);
+            
+            // Reset de classes visuais dos botões do menu
+            document.getElementById('btnNavNeemias').classList.remove('btn-accent');
+            document.getElementById('btnNavVersiculo').classList.remove('btn-accent');
+            document.getElementById('neemiasScreen').classList.remove('active');
+            document.getElementById('versiculoScreen').classList.remove('active');
 
-        function sortearPergunta() {
-            if (perguntasDisponiveis.length === 0) {
-                alert("Fim do banco de dados! Todas as perguntas cadastradas já foram sorteadas.");
-                return;
+            if (novoModo === 'neemias') {
+                document.getElementById('btnNavNeemias').classList.add('btn-accent');
+                document.getElementById('neemiasScreen').classList.add('active');
+                document.getElementById('currentGameModeTitle').innerText = "Modo: Perguntas de Neemias";
+                limparPainelNeemiasUi();
+            } else {
+                document.getElementById('btnNavVersiculo').classList.add('btn-accent');
+                document.getElementById('versiculoScreen').classList.add('active');
+                document.getElementById('currentGameModeTitle').innerText = "Modo: Complete o Versículo";
+                limparPainelVersiculoUi();
             }
-
-            const indiceAleatorio = Math.floor(Math.random() * perguntasDisponiveis.length);
-            perguntaAtual = perguntasDisponiveis.splice(indiceAleatorio, 1)[0];
-            contadorPerguntasRespondidas++;
-
-            document.getElementById('questionNumber').innerText = `Pergunta Sorteada nº ${contadorPerguntasRespondidas}`;
-            document.getElementById('questionText').innerText = perguntaAtual.q;
-            document.getElementById('questionRef').innerText = `Referência oculta até revelação`;
-            
-            document.getElementById('btnSortear').disabled = true;
-            document.getElementById('btnVerResposta').disabled = false;
-            document.getElementById('btnProxima').disabled = true;
-            
-            atualizarContador();
+            atualizarContadoresFooter();
+            salvarEstado();
         }
 
-        function revelarResposta() {
-            if (!perguntaAtual) return;
+        function atualizarExibicaoPlacares() {
+            const t1Displays = document.querySelectorAll('.t1-display');
+            const t2Displays = document.querySelectorAll('.t2-display');
+            t1Displays.forEach(el => el.innerText = state.equipe1);
+            t2Displays.forEach(el => el.innerText = state.equipe2);
 
-            document.getElementById('answerText').innerText = perguntaAtual.a;
-            document.getElementById('questionRef').innerText = `Base Bíblica: ${perguntaAtual.r}`;
-            document.getElementById('answerBox').style.display = 'block';
-
-            document.getElementById('btnVerResposta').disabled = true;
-            document.getElementById('btnProxima').disabled = false;
+            document.getElementById('valTeam1').innerText = state.pontos1;
+            document.getElementById('valTeam2').innerText = state.pontos1; // Back-compatibilidade
+            document.getElementById('valTeam1V').innerText = state.pontos1;
+            document.getElementById('valTeam2').innerText = state.pontos2;
+            document.getElementById('valTeam2V').innerText = state.pontos2;
         }
 
-        function limparPainel() {
-            document.getElementById('questionNumber').innerText = "Próxima Pergunta";
-            document.getElementById('questionText').innerText = "Pronto para o próximo sorteio...";
-            document.getElementById('questionRef').innerText = "";
-            document.getElementById('answerBox').style.display = 'none';
-            document.getElementById('answerText').innerText = "";
-            
-            perguntaAtual = null;
-            document.getElementById('btnSortear').disabled = false;
-            document.getElementById('btnVerResposta').disabled = true;
-            document.getElementById('btnProxima').disabled = true;
+        function atualizarContadoresFooter() {
+            document.getElementById('countN').innerText = state.restantesNeemias.length;
+            document.getElementById('countV').innerText = state.restantesVersiculos.length;
         }
 
         function alterarPontos(equipe, valor) {
             if (equipe === 1) {
-                pontosEquipe1 += valor;
-                if (pontosEquipe1 < 0) pontosEquipe1 = 0; // Impede pontuação negativa se desejar
-                document.getElementById('valTeam1').innerText = pontosEquipe1;
-            } else if (equipe === 2) {
-                pontosEquipe2 += valor;
-                if (pontosEquipe2 < 0) pontosEquipe2 = 0;
-                document.getElementById('valTeam2').innerText = pontosEquipe2;
+                state.pontos1 += valor;
+                if (state.pontos1 < 0) state.pontos1 = 0;
+            } else {
+                state.pontos2 += valor;
+                if (state.pontos2 < 0) state.pontos2 = 0;
+            }
+            atualizarExibicaoPlacares();
+            salvarEstado();
+        }
+
+        // FUNÇÕES DO MODO DE PERGUNTAS (NEEMIAS)
+        function sortearPerguntaNeemias() {
+            if (state.restantesNeemias.length === 0) {
+                alert("Todas as perguntas de Neemias deste banco já foram sorteadas!");
+                return;
+            }
+            const idx = Math.floor(Math.random() * state.restantesNeemias.length);
+            state.idxAtual = idx;
+            state.respondidasContador++;
+
+            const item = state.restantesNeemias[idx];
+            document.getElementById('neemiasQNumber').innerText = `Pergunta Sorteada nº ${state.respondidasContador}`;
+            document.getElementById('neemiasQText').innerText = item.q;
+            document.getElementById('neemiasQRef').innerText = "Referência protegida até revelação.";
+
+            document.getElementById('btnSortearN').disabled = true;
+            document.getElementById('btnVerRespN').disabled = false;
+            document.getElementById('btnProxN').disabled = true;
+            atualizarContadoresFooter();
+            salvarEstado();
+        }
+
+        function revelarRespostaNeemias() {
+            if (state.idxAtual === null) return;
+            const item = state.restantesNeemias[state.idxAtual];
+            
+            document.getElementById('neemiasAnswerText').innerText = item.a;
+            document.getElementById('neemiasQRef').innerText = `Base Teológica: ${item.r}`;
+            document.getElementById('neemiasAnswerBox').style.display = 'block';
+
+            document.getElementById('btnVerRespN').disabled = true;
+            document.getElementById('btnProxN').disabled = false;
+        }
+
+        function proximaRodadaNeemias() {
+            if (state.idxAtual !== null) {
+                state.restantesNeemias.splice(state.idxAtual, 1);
+                state.idxAtual = null;
+            }
+            limparPainelNeemiasUi();
+            atualizarContadoresFooter();
+            salvarEstado();
+        }
+
+        function limparPainelNeemiasUi() {
+            document.getElementById('neemiasQNumber').innerText = "Próxima Pergunta";
+            document.getElementById('neemiasQText').innerText = "Pronto para o próximo sorteio...";
+            document.getElementById('neemiasQRef').innerText = "";
+            document.getElementById('neemiasAnswerBox').style.display = 'none';
+            document.getElementById('btnSortearN').disabled = false;
+            document.getElementById('btnVerRespN').disabled = true;
+            document.getElementById('btnProxN').disabled = true;
+        }
+
+        // FUNÇÕES DO MODO DE JOGO: COMPLETE O VERSÍCULO
+        function sortearVersiculo() {
+            if (state.restantesVersiculos.length === 0) {
+                alert("Todos os versículos já foram sorteados!");
+                return;
+            }
+            const idx = Math.floor(Math.random() * state.restantesVersiculos.length);
+            state.idxAtual = idx;
+
+            const item = state.restantesVersiculos[idx];
+            document.getElementById('versiculoVNumber').innerText = "Complete as Lacunas!";
+            document.getElementById('versiculoVText').innerText = item.q;
+            document.getElementById('versiculoVRef').innerText = `Onde se localiza? ${item.r}`;
+
+            document.getElementById('btnSortearV').disabled = true;
+            document.getElementById('btnVerRespV').disabled = false;
+            document.getElementById('btnProxV').disabled = true;
+
+            // Disparar Contador Progressivo/Regressivo
+            timeLeft = 20;
+            document.getElementById('timerBox').innerText = timeLeft;
+            document.getElementById('timerBox').style.color = "var(--danger)";
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerBox').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timerBox').innerText = "TEMPO ESGOTADO!";
+                    notificarErro();
+                }
+            }, 1000);
+
+            atualizarContadoresFooter();
+            salvarEstado();
+        }
+
+        function revelarRespostaVersiculo() {
+            clearInterval(timerInterval);
+            if (state.idxAtual === null) return;
+            const item = state.restantesVersiculos[state.idxAtual];
+
+            document.getElementById('versiculoAnswerText').innerText = item.a;
+            document.getElementById('versiculoAnswerBox').style.display = 'block';
+
+            document.getElementById('btnVerRespV').disabled = true;
+            document.getElementById('btnProxV').disabled = false;
+        }
+
+        function proximaRodadaVersiculo() {
+            if (state.idxAtual !== null) {
+                state.restantesVersiculos.splice(state.idxAtual, 1);
+                state.idxAtual = null;
+            }
+            limparPainelVersiculoUi();
+            atualizarContadoresFooter();
+            salvarEstado();
+        }
+
+        function limparPainelVersiculoUi() {
+            clearInterval(timerInterval);
+            document.getElementById('timerBox').innerText = "20";
+            document.getElementById('versiculoVNumber').innerText = "Aguardando Próxima Rodada";
+            document.getElementById('versiculoVText').innerText = "Clique abaixo para liberar o versículo com cronômetro...";
+            document.getElementById('versiculoVRef').innerText = "";
+            document.getElementById('versiculoAnswerBox').style.display = 'none';
+            document.getElementById('btnSortearV').disabled = false;
+            document.getElementById('btnVerRespV').disabled = true;
+            document.getElementById('btnProxV').disabled = true;
+        }
+
+        // SISTEMA DE ANIMAÇÕES INTERATIVAS (ACERTOU / ERROU)
+        function notificarAcerto() {
+            tocarSom('acerto');
+            // Dispara rajadas de confetes na tela do usuário
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function notificarErro() {
+            tocarSom('erro');
+            const cardAtivo = state.modo === 'neemias' ? document.getElementById('neemiasCard') : document.getElementById('versiculoCard');
+            
+            // Aplica efeito tremor
+            cardAtivo.classList.add('shake-animation');
+            setTimeout(() => {
+                cardAtivo.classList.remove('shake-animation');
+            }, 450);
+        }
+
+        // SAFETY CONTROL: RESET TOTAL DA GINCANA DO ZERO
+        function perguntarReiniciarDoZero() {
+            const conf = confirm("⚠️ ATENÇÃO: Tem certeza absoluta que quer deletar o placar e restaurar todas as 70+ perguntas de Neemias? Isso reiniciará o jogo do zero!");
+            if (conf) {
+                localStorage.removeItem('gincana_biblica_state_v2');
+                clearInterval(timerInterval);
+                location.reload(); // Recarrega limpo para tela de setup
             }
         }
     </script>
