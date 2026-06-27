@@ -247,7 +247,7 @@
             <!-- CARD DO VERSÍCULO SUPER DESTACADO -->
             <div class="question-card" id="versiculoCard">
                 <div class="question-meta" id="versiculoVNumber">Desafio Cronometrado</div>
-                <div class="timer-display" id="timerBox">60</div>
+                <div class="timer-display" id="timerBox">30</div>
                 <div class="question-text" id="versiculoVText">Sorteie um versículo e complete as lacunas antes do tempo acabar!</div>
                 <span class="reference" id="versiculoVRef"></span>
                 <div class="answer-box" id="versiculoAnswerBox" style="text-align: center; font-weight: bold;">
@@ -425,7 +425,7 @@
 
         // CONTROLE DO TIMER DO VERSÍCULO
         let timerInterval = null;
-        let timeLeft = 60;
+        let timeLeft = 30;
 
         // SISTEMA DE ÁUDIO SINTETIZADO
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -686,7 +686,7 @@
 
         function limparPainelVersiculoUi() {
             clearInterval(timerInterval);
-            document.getElementById('timerBox').innerText = "60";
+            document.getElementById('timerBox').innerText = "30";
             document.getElementById('versiculoVNumber').innerText = "Aguardando Próxima Rodada";
             document.getElementById('versiculoVText').innerText = "Clique abaixo para liberar o versículo com cronômetro...";
             document.getElementById('versiculoVRef').innerText = "";
