@@ -104,7 +104,7 @@
             color: var(--accent); font-weight: bold; margin-bottom: 10px;
         }
 
-        /* Destacar as palavras preenchidas dentro do texto */
+        /* Destarcar as palavras preenchidas dentro do texto */
         .word-highlight {
             color: #27ae60;
             background-color: #e8f8f5;
@@ -262,7 +262,7 @@
 
             <div class="controls">
                 <button class="full-width btn-accent" id="btnSortearV" onclick="sortearVersiculo()">Sortear Versículo Aleatório</button>
-                <button id="btnVerRespV" onclick="revelarRespostaVersiculo()" disabled>Revelar Palabras Ocultas</button>
+                <button id="btnVerRespV" onclick="revelarRespostaVersiculo()" disabled>Revelar Palavras Ocultas</button>
                 <button id="btnProxV" onclick="proximaRodadaVersiculo()" disabled>Próxima Rodada</button>
             </div>
         </div>
@@ -278,7 +278,7 @@
     </div>
 
     <script>
-        // BANCO DE DADOS DE NEEMIAS AMPLIADO (MAIS DE 70 PERGUNTAS AUTÊNTICAS)
+        // BANCO DE DADOS DE NEEMIAS (MAIS DE 70 PERGUNTAS AUTÊNTICAS)
         const totalBancoNeemias = [
             { q: "Qual era a função de confiança que Neemias exercia diante do rei Artaxerxes?", a: "Copeiro do rei.", r: "Neemias 1:11" },
             { q: "Quem trouxe as tristes notícias sobre a situação caótica de Jerusalém para Neemias?", a: "Hanani, um de seus irmãos, junto com alguns homens de Judá.", r: "Neemias 1:2" },
@@ -315,7 +315,7 @@
             { q: "Qual era a ordem de Neemias sobre onde passar a noite para proteger a cidade?", a: "Todos deveriam passar a noite dentro de Jerusalém.", r: "Neemias 4:22" },
             { q: "Qual o único momento em que Neemias e seus homens tiravam suas roupas?", a: "Apenas para lavar-se (ou cada um ia com sua arma até a água).", r: "Neemias 4:23" },
             { q: "Qual grande clamor social surgiu do povo em Neemias 5?", a: "O clamor dos pobres contra seus irmãos judeus por causa de dívidas e fome.", r: "Neemias 5:1" },
-            { q: "O que some judeus ricos confiscaram de seus irmãos necessitados como penhor?", a: "Terras, vinhas, olivais e até os próprios filhos como escravos.", r: "Neemias 5:3-5" },
+            { q: "O que alguns judeus ricos confiscaram de seus irmãos necessitados como penhor?", a: "Terras, vinhas, olivais e até os próprios filhos como escravos.", r: "Neemias 5:3-5" },
             { q: "Como Neemias reagiu ao ouvir sobre a usura praticada pelos nobres?", a: "Ficou extremamente irado e repreendeu duramente os nobres.", r: "Neemias 5:6-7" },
             { q: "Qual juro abusivo Neemias ordenou que os nobres devolvessem imediatamente?", a: "A centésima parte do dinheiro, do trigo, do vinho e do azeite.", r: "Neemias 5:11" },
             { q: "Que ato simbólico Neemias fez com suas vestes para amaldiçoar quem não cumprisse o acordo?", a: "Sacudiu o seu regaço (suas vestes).", r: "Neemias 5:13" },
@@ -355,50 +355,58 @@
             { q: "Qual lei sobre o sábado Neemias fez cumprir fechando as portas e ameaçando os mercadores?", a: "A proibição de vender mercadorias ou carregar fardos no dia de sábado.", r: "Neemias 13:19" }
         ];
 
-        // BANCO DE DADOS DO MINI-GAME MODIFICADO COM MARCADORES ESPECÍFICOS {0}, {1} PARA SUBSTITUIÇÃO DIRETA
+        // BANCO DE DADOS EXPANDIDO: EXATAMENTE 50 VERSÍCULOS MIXADOS (NEEMIAS + FAMOSOS)
         const bancoVersiculos = [
-            { 
-                q: "Disse-lhes mais: Ide, comei as gorduras, e bebei as doçuras, e enviai porções aos que não têm nada preparado para si; porque este dia é consagrado ao nosso Senhor; portanto não vos entristeçais; porque a {0} do {1} é a vossa {2}.", 
-                lacunas: ["_______", "_______", "_______"],
-                respostas: ["alegria", "Senhor", "força"], 
-                r: "Neemias 8:10" 
-            },
-            { 
-                q: "O Deus dos céus é o que nos fará prosperar; e nós, seus servos, nos levantaremos e {0}; mas vós não tendes parte, nem justiça, nem {1} em Jerusalém.", 
-                lacunas: ["_______", "_______"],
-                respostas: ["edificaremos", "memória"], 
-                r: "Neemias 2:20" 
-            },
-            { 
-                q: "Lembra-te de mim, Deus meu, para o {0}, e não risques as minhas {1} que eu fiz para a casa do meu Deus.", 
-                lacunas: ["_______", "_______"],
-                respostas: ["bem", "beneficências"], 
-                r: "Neemias 13:14" 
-            },
-            { 
-                q: "Assim edificamos o muro, e todo o muro se fechou até a sua {0}; porque o coração do povo se inclinava a {1}.", 
-                lacunas: ["_______", "_______"],
-                respostas: ["metade", "trabalhar"], 
-                r: "Neemias 4:6" 
-            },
-            { 
-                q: "Ouvindo, pois, Sanbalate, Tobias, os árabes, os amonitas e os asdoditas que o muro ia {0} e as brechas se começavam a {1}, iraram-se sobremodo.", 
-                lacunas: ["_______", "_______"],
-                respostas: ["crescendo", "fechar"], 
-                r: "Neemias 4:7" 
-            },
-            { 
-                q: "Lâmpada para os meus pés é tua {0}, e luz para o meu {1}.", 
-                lacunas: ["_______", "_______"],
-                respostas: ["palavra", "caminho"], 
-                r: "Salmos 119:105" 
-            },
-            { 
-                q: "Porque Deus amou o mundo de tal maneira que deu o seu Filho {0}, para que todo aquele que nele crê não {1}, mas tenha a vida eterna.", 
-                lacunas: ["_______", "_______"],
-                respostas: ["unigênito", "pereça"], 
-                r: "João 3:16" 
-            }
+            { q: "porque a {0} do {1} é a vossa {2}.", respostas: ["alegria", "Senhor", "força"], r: "Neemias 8:10" },
+            { q: "O Deus dos céus é o que nos fará prosperar; e nós, seus servos, nos levantaremos e {0}; mas vós não tendes parte, nem justiça, nem {1} em Jerusalém.", respostas: ["edificaremos", "memória"], r: "Neemias 2:20" },
+            { q: "Lembra-te de mim, Deus meu, para o {0}, e não risques as minhas {1} que eu fiz para a casa do meu Deus.", respostas: ["bem", "beneficências"], r: "Neemias 13:14" },
+            { q: "Assim edificamos o muro, e todo o muro se fechou até a sua {0}; porque o coração do povo se inclinava a {1}.", respostas: ["metade", "trabalhar"], r: "Neemias 4:6" },
+            { q: "Ouvindo, pois, Sanbalate, Tobias, os árabes, os amonitas e os asdoditas que o muro ia {0} e as brechas se começavam a {1}, iraram-se sobremodo.", respostas: ["crescendo", "fechar"], r: "Neemias 4:7" },
+            { q: "Lâmpada para os meus pés é tua {0}, e luz para o meu {1}.", respostas: ["palavra", "caminho"], r: "Salmos 119:105" },
+            { q: "Porque Deus amou o mundo de tal maneira que deu o seu Filho {0}, para que todo aquele que nele crê não {1}, mas tenha a vida eterna.", respostas: ["unigênito", "pereça"], r: "João 3:16" },
+            { q: "O Senhor é o meu {0}, nada me {1}.", respostas: ["pastor", "faltará"], r: "Salmos 23:1" },
+            { q: "Posso todas as coisas naquele que me {0}.", respostas: ["fortalece"], r: "Filipenses 4:13" },
+            { q: "No princípio criou Deus o {0} e a {1}.", respostas: ["céu", "terra"], r: "Gênesis 1:1" },
+            { q: "Eu sou o {0}, e a {1}, e a vida; ninguém vem ao Pai, senão por mim.", respostas: ["caminho", "verdade"], r: "João 14:6" },
+            { q: "Buscai primeiro o {0} de Deus, e a sua {1}, e todas estas coisas vos serão acrescentadas.", respostas: ["reino", "justiça"], r: "Mateus 6:33" },
+            { q: "O que habita no {0} do Altíssimo, à sombra do Onipotente {1}.", respostas: ["esconderijo", "descansará"], r: "Salmos 91:1" },
+            { q: "Entrega o teu {0} ao Senhor; confia nele, e ele o {1}.", respostas: ["caminho", "fará"], r: "Salmos 37:5" },
+            { q: "Ainda que eu andasse pelo vale da {0} da morte, não temeria {1} algum.", respostas: ["sombra", "mal"], r: "Salmos 23:4" },
+            { q: "Guardei a tua {0} no meu coração, para não {1} contra ti.", respostas: ["palavra", "pecar"], r: "Salmos 119:11" },
+            { q: "Se Deus é por nós, quem será {0} nós?", respostas: ["contra"], r: "Romanos 8:31" },
+            { q: "Tudo posso naquele que me {0}.", respostas: ["fortalece"], r: "Filipenses 4:13" },
+            { q: "Vinde a mim, todos os que estais {0} e oprimidos, e eu vos {1}.", respostas: ["cansados", "aliviarei"], r: "Mateus 11:28" },
+            { q: "Combati o bom {0}, acabei a {1}, guardei a {2}.", respostas: ["combate", "carreira", "fé"], r: "2 Timóteo 4:7" },
+            { q: "Os que semeiam em lágrimas {0} com {1}.", respostas: ["segarão", "alegria"], r: "Salmos 126:5" },
+            { q: "Ensina a criança no {0} em que deve andar; e até quando envelhecer não se {1} dele.", respostas: ["caminho", "desviará"], r: "Provérbios 22:6" },
+            { q: "Porque o salário do pecado é a {0}, mas o dom gratuito de Deus é a {1} eterna.", respostas: ["morte", "vida"], r: "Romanos 6:23" },
+            { q: "Crê no Senhor {0} e serás salvo, tu e a tua {1}.", respostas: ["Jesus", "casa"], r: "Atos 16:31" },
+            { q: "A respostar branda desvia o {0}, mas a palavra dura suscita a {1}.", respostas: ["furor", "ira"], r: "Provérbios 15:1" },
+            { q: "Fizeste-nos para ti, Senhor, e o nosso {0} estará inquieto enquanto não {1} em ti.", respostas: ["coração", "descansar"], r: "Citação Clássica / Agostinho" },
+            { q: "Apascenta as minhas {0}.", respostas: ["ovelhas"], r: "João 21:17" },
+            { q: "A graça do Senhor Jesus {0} seja com todos {1}.", respostas: ["Cristo", "vós"], r: "Apocalipse 22:21" },
+            { q: "O ferro com o ferro se {0}; assim o homem afia o rosto do seu {1}.", respostas: ["agusa", "amigo"], r: "Provérbios 27:17" },
+            { q: "Filho meu, guarda o {0} de teu pai, e não deixes a {1} de tua mãe.", respostas: ["mandamento", "lei"], r: "Provérbios 6:20" },
+            { q: "O coração alegre aformeia o {0}, mas pela dor do coração o espírito se {1}.", respostas: ["rosto", "abate"], r: "Provérbios 15:13" },
+            { q: "Provai, e vede que o Senhor é {0}; bem-aventurado o homem que nele {1}.", respostas: ["bom", "confia"], r: "Salmos 34:8" },
+            { q: "Como o cervo brama pelas correntes das {0}, assim suspira a minha alma por ti, ó {1}.", respostas: ["águas", "Deus"], r: "Salmos 42:1" },
+            { q: "Grandes coisas fez o {0} por nós, por isso estamos {1}.", respostas: ["Senhor", "alegres"], r: "Salmos 126:3" },
+            { q: "Eu e a minha {0} serviremos ao {1}.", respostas: ["casa", "Senhor"], r: "Josué 24:15" },
+            { q: "Não temas, porque eu sou {0}; não te assombres, porque eu sou o teu {1}.", respostas: ["contigo", "Deus"], r: "Isaías 41:10" },
+            { q: "Sede fortes e {0}; não temais, nem vos espanteis diante {1} deles.", respostas: ["corajosos", "frente"], r: "Deuteronômio 31:6" },
+            { q: "Sabemos que todas as coisas cooperam para o {0} daqueles que amam a {1}.", respostas: ["bem", "Deus"], r: "Romanos 8:28" },
+            { q: "Se o Senhor não edificar a {0}, em vão trabalham os que a {1}.", respostas: ["casa", "edificam"], r: "Salmos 127:1" },
+            { q: "Ora, a fé é o {0} das coisas que se esperam, e a prova das coisas que se não {1}.", respostas: ["firme_fundamento", "veem"], r: "Hebreus 11:1" },
+            { q: "Acheguemo-nos, portanto, confiadamente, junto ao trono da {0}, a fim de recebermos misericórdia e acharmos {1}.", respostas: ["graça", "ajuda"], r: "Hebreus 4:16" },
+            { q: "Portanto, tudo o que vós quereis que os homens vos façam, fazei-lho também {0}, porque esta é a lei e os {1}.", respostas: ["vós", "profetas"], r: "Mateus 7:12" },
+            { q: "E conhecereis a {0}, e a verdade vos {1}.", respostas: ["verdade", "libertará"], r: "João 8:32" },
+            { q: "Mas os que esperam no Senhor renovarão as suas {0}; subirão com asas como {1}.", respostas: ["forças", "águias"], r: "Isaías 40:31" },
+            { q: "De sorte que a fé é pelo {0}, e o ouvir pela palavra de {1}.", respostas: ["ouvir", "Deus"], r: "Romanos 10:17" },
+            { q: "Sede cumpridores da {0} e não somente {1}.", respostas: ["palavra", "ouvintes"], r: "Tiago 1:22" },
+            { q: "Amados, amemo-nos uns aos outros, porque o amor procede de {0}; e todo aquele que ama é nascido de {1}.", respostas: ["Deus", "Deus"], r: "1 João 4:7" },
+            { q: "O amor é {0}, é benigno; o amor não arde em {1}.", respostas: ["paciente", "ciúmes"], r: "1 Coríntios 13:4" },
+            { q: "Portanto, agora, nenhuma {0} há para os que estão em Cristo {1}.", respostas: ["condenação", "Jesus"], r: "Romanos 8:1" },
+            { q: "Eis que estou à porta e {0}; se alguém ouvir a minha voz e abrir a porta, {1} em sua casa.", respostas: ["bato", "entrarei"], r: "Apocalipse 3:20" }
         ];
 
         // VARIÁVEIS DE ESTADO DO JOGO
@@ -430,7 +438,7 @@
                 } else if (tipo === 'erro') {
                     playTone(150, 0.3, 'sawtooth');
                 }
-            } catch(e) { console.log("Áudio bloqueado pelo navegador temporariamente."); }
+            } catch(e) { console.log("Áudio bloqueado pelo navegador."); }
         }
 
         function playTone(freq, duration, type) {
@@ -448,17 +456,21 @@
 
         // SALVAMENTO PERSISTENTE AUTO-SAVE
         window.onload = function() {
-            const savedState = localStorage.getItem('gincana_biblica_state_v3');
+            const savedState = localStorage.getItem('gincana_biblica_state_v4');
             if (savedState) {
                 state = JSON.parse(savedState);
                 if (state.jogoIniciado) {
                     restaurarPartida();
+                    return;
                 }
             }
+            // Inicializa contadores visuais mesmo antes do clique inicial
+            document.getElementById('countN').innerText = totalBancoNeemias.length;
+            document.getElementById('countV').innerText = bancoVersiculos.length;
         };
 
         function salvarEstado() {
-            localStorage.setItem('gincana_biblica_state_v3', JSON.stringify(state));
+            localStorage.setItem('gincana_biblica_state_v4', JSON.stringify(state));
         }
 
         function restaurarPartida() {
@@ -529,12 +541,8 @@
         }
 
         function atualizarContadoresFooter() {
-            document.getElementById('countN').innerText = state.restantesNeemias.length;
-            document.getElementById('countV').innerText = state.restantesVersiculos.length;
-        }
-
-        function改变Pontos(equipe, valor) {
-            alterarPontos(equipe, valor);
+            document.getElementById('countN').innerText = state.jogoIniciado ? state.restantesNeemias.length : totalBancoNeemias.length;
+            document.getElementById('countV').innerText = state.jogoIniciado ? state.restantesVersiculos.length : bancoVersiculos.length;
         }
 
         function alterarPontos(equipe, valor) {
@@ -551,6 +559,7 @@
 
         // MODO NEEMIAS
         function sortearPerguntaNeemias() {
+            if (!state.jogoIniciado) return;
             if (state.restantesNeemias.length === 0) {
                 alert("Todas as perguntas de Neemias deste banco já foram sorteadas!");
                 return;
@@ -606,13 +615,10 @@
         // LÓGICA DE MONTAGEM DINÂMICA DAS LACUNAS NO TEXTO
         function renderizarTextoVersiculo(item, revelarRespostas = false) {
             let textoFormatado = item.q;
-            
             for(let i = 0; i < item.respostas.length; i++) {
                 if(revelarRespostas) {
-                    // Substitui a marcação pela palavra preenchida com estilo destacado
                     textoFormatado = textoFormatado.replace(`{${i}}`, `<span class="word-highlight">${item.respostas[i]}</span>`);
                 } else {
-                    // Mantém os sublinhados normais na hora do sorteio
                     textoFormatado = textoFormatado.replace(`{${i}}`, `<u>&nbsp;&nbsp;&nbsp;&nbsp;_______&nbsp;&nbsp;&nbsp;&nbsp;</u>`);
                 }
             }
@@ -620,6 +626,7 @@
         }
 
         function sortearVersiculo() {
+            if (!state.jogoIniciado) return;
             if (state.restantesVersiculos.length === 0) {
                 alert("Todos os versículos já foram sorteados!");
                 return;
@@ -629,8 +636,6 @@
 
             const item = state.restantesVersiculos[idx];
             document.getElementById('versiculoVNumber').innerText = "Complete as Lacunas!";
-            
-            // Renderiza o versículo exibindo os espaços em branco
             document.getElementById('versiculoVText').innerHTML = renderizarTextoVersiculo(item, false);
             document.getElementById('versiculoVRef').innerText = `Onde se localiza? ${item.r}`;
 
@@ -662,7 +667,6 @@
             if (state.idxAtual === null) return;
             const item = state.restantesVersiculos[state.idxAtual];
 
-            // Renderiza novamente injetando as palavras certas direto nos espaços vazios!
             document.getElementById('versiculoVText').innerHTML = renderizarTextoVersiculo(item, true);
             document.getElementById('versiculoAnswerBox').style.display = 'block';
 
@@ -714,7 +718,7 @@
         function perguntarReiniciarDoZero() {
             const conf = confirm("⚠️ ATENÇÃO: Tem certeza absoluta que quer deletar o placar e restaurar todas as perguntas? Isso reiniciará o jogo do zero!");
             if (conf) {
-                localStorage.removeItem('gincana_biblica_state_v3');
+                localStorage.clear();
                 clearInterval(timerInterval);
                 location.reload();
             }
